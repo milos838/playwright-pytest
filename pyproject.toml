@@ -1,0 +1,27 @@
+[project]
+name = "playwright-pytest"
+version = "0.1.0"
+description = "Playwright end-to-end tests with pytest"
+requires-python = ">=3.10"
+dependencies = [
+    "playwright>=1.49.0",
+    "pytest>=8.0.0",
+    "pytest-playwright>=0.6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "-ra",
+]
+markers = [
+    "smoke: quick sanity checks",
+    "slow: tests that take longer to run",
+]
+
+[tool.pytest-playwright]
+browser = "chromium"
+headed = false
+slow_mo = 0

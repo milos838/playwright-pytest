@@ -1,0 +1,14 @@
+{
+    "url" : "https://eventhub.rahulshettyacademy.com/",
+    "username" : "mikitest83@gmail.com",
+    "password" : "TestTest1!",
+    "expected_url": "https://eventhub.rahulshettyacademy.com/login",
+    "events_url": "https://eventhub.rahulshettyacademy.com/events",
+    "bookings_url": "https://eventhub.rahulshettyacademy.com/bookings",
+    "event_name": "Hollywood Monsoon Night — Los Angeles",
+    "customer_name": "John Doe",
+    "customer_email": "test@test.com",
+    "customer_phone": "+1234567890",
+    "refund_status": "Eligible for refund."
+
+}
