@@ -55,7 +55,7 @@ jobs:
       
       - name: Upload test report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pytest-report-${{ matrix.python-version }}
           path: report.html
@@ -98,7 +98,7 @@ jobs:
       
       - name: Upload smoke test logs
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: smoke-test-logs
           path: .pytest_cache/
