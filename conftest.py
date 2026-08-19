@@ -18,3 +18,25 @@ def load_test_data(data_file: str = "Data/data_setup.json") -> dict:
     data_path = Path(__file__).parent / data_file
     with open(data_path) as f:
         return json.load(f)
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--browser_name", action="store", default="chrome", help="browser selection"
+    )
+
+@pytest.fixture
+def browserInstance(playwright, request):
+    # Fixture to create new browser instance for each test
+    browser_name = request.config.getoption("browser_name")
+    if browser_name == "chrome":
+        browser = playwright.chromium.launch(headless=False)
+    elif browser_name == "firefox":
+        browser = playwright.firefox.launch(headless=False)
+    elif browser_name == "webkit":
+        browser = playwright.webkit.launch(headless=False)
+
+    context = browser.new_context()
+    page = context.new_page()
+    yield page
+    context.close()
+    browser.close()
