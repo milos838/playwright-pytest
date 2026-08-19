@@ -1,5 +1,6 @@
 {
     "url" : "https://eventhub.rahulshettyacademy.com/",
+    "api_url" : "https://api.eventhub.rahulshettyacademy.com/api/",
     "username" : "mikitest83@gmail.com",
     "password" : "TestTest1!",
     "expected_url": "https://eventhub.rahulshettyacademy.com/login",
