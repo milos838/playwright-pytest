@@ -31,6 +31,20 @@ The automation test suite validates critical user workflows in the EventHub appl
 
 ---
 
+## Failed Test Traces
+
+Playwright tracing starts automatically for every test. Traces are saved only for failed setup or test phases in `test-results/traces/`.
+
+Open a trace with:
+
+```bash
+playwright show-trace test-results/traces/<trace-file>.zip
+```
+
+Successful tests stop tracing without creating an artifact.
+
+---
+
 ## Project Structure
 
 ```
@@ -39,18 +53,25 @@ playwright-pytest/
 ├── pyproject.toml                              # Project metadata and dependencies
 ├── Data/
 │   └── data_setup.json                         # Test data and configuration
-├── Pages/                                      # Page Object Models (currently empty)
-├── Utils/                                      # Utility functions (currently empty)
+├── Pages/                                      # Page Object Models
+│   ├── loginPage.py                            # Login and authentication
+│   ├── homePage.py                             # Home-page navigation
+│   ├── eventPage.py                            # Event booking workflow
+│   └── bookingsPage.py                         # Booking management workflows
+├── Utils/                                      # Shared utilities
+│   └── apiBase.py                              # API helpers
 ├── Tests/                                      # Test cases
-│   ├── test_EventHub_Login_page_navigation.py  # Login page navigation tests
+│   ├── test_EventHub_UI_Login_page_navigation.py # Login page navigation tests
 │   ├── test_EventHub_UI_login_functionality.py # Login functionality tests
-│   ├── test_EventHub_Events_options.py         # Event browsing tests
-│   ├── test_EventHub_Bookings_options.py       # Booking management tests
+│   ├── test_EventHub_UI_Events_options.py      # Event browsing tests
+│   ├── test_EventHub_UI_Bookings_options.py    # Booking management tests
 │   ├── test_EventHub_UI_Event_booking.py       # Event booking tests
 │   ├── test_EventHub_UI_Cancel_booked_event.py # Cancel booking tests
 │   ├── test_EventHub_UI_View_booked_event_details.py # View booking details tests
-│   └── playwright_pytest.egg-info/             # Package metadata
-└── playwright_pytest.egg-info/                 # Package info files
+│   ├── test_EventHub_API_Login_functionality.py # API login tests
+│   ├── test_EventHub_API_Event_booking.py      # API booking tests
+│   └── test_EventHub_Clearing_test_data.py     # Test-data cleanup
+└── playwright_pytest.egg-info/                 # Package metadata
 ```
 
 ---
@@ -308,41 +329,26 @@ def test_example(page: Page, load_test_data):
 
 ## Page Object Model (POM) Pattern
 
-Currently, the project has an empty `Pages/` directory. For scalability and maintainability, consider implementing the Page Object Model pattern:
+UI tests use page objects to keep locators, browser actions, and page-level assertions out of the test files.
 
 ### Example Structure
 ```
 Pages/
-├── __init__.py
-├── login_page.py
-├── events_page.py
-├── bookings_page.py
-├── event_details_page.py
-└── booking_confirmation_page.py
+├── loginPage.py       # Login and authentication
+├── homePage.py        # Home-page navigation
+├── eventPage.py       # Event booking workflow
+└── bookingsPage.py    # Bookings, cancellation, details, and refunds
 ```
 
-### Example Login Page Object
-```python
-from playwright.sync_api import Page, expect
+Each test creates the page objects with the shared Playwright `page` fixture. Authentication is performed once through `LoginPage`; navigation and workflow actions are then delegated to the relevant page object.
 
-class LoginPage:
-    def __init__(self, page: Page):
-        self.page = page
-        self.email_field = "#email"
-        self.password_field = "#password"
-        self.login_button = "#login-btn"
-        self.user_email_display = "#user-email-display"
-    
-    def navigate(self):
-        self.page.goto("https://eventhub.rahulshettyacademy.com/")
-    
-    def login(self, email: str, password: str):
-        self.page.locator(self.email_field).fill(email)
-        self.page.locator(self.password_field).fill(password)
-        self.page.locator(self.login_button).click()
-    
-    def verify_login_success(self, email: str):
-        expect(self.page.locator(self.user_email_display)).to_have_text(email)
+### Example Page Object Usage
+```python
+login_page = LoginPage(page)
+home_page = HomePage(page)
+
+login_page.login(test_data)
+home_page.navigate_to_events_from_header_link()
 ```
 
 ---
@@ -466,16 +472,15 @@ jobs:
 
 ## Future Enhancements
 
-1. **Implement Page Object Model** - Refactor tests to use POM pattern
-2. **Add Visual Testing** - Screenshot comparison with baseline images
-3. **Parallel Execution** - Configure pytest-xdist for parallel test runs
-4. **Test Reporting** - Add Allure or HTML reporting
-5. **CI/CD Integration** - Set up GitHub Actions or similar
-6. **Performance Testing** - Add performance metrics and benchmarks
-7. **API Testing** - Combine with API testing for full coverage
-8. **Data-Driven Tests** - Parameterize tests with multiple data sets
-9. **Cross-Browser Testing** - Test on Firefox, Safari, Edge
-10. **Mobile Testing** - Add mobile device emulation tests
+1. **Add Visual Testing** - Screenshot comparison with baseline images
+2. **Parallel Execution** - Configure pytest-xdist for parallel test runs
+3. **Test Reporting** - Add Allure or HTML reporting
+4. **CI/CD Integration** - Set up GitHub Actions or similar
+5. **Performance Testing** - Add performance metrics and benchmarks
+6. **API Testing** - Combine with API testing for full coverage
+7. **Data-Driven Tests** - Parameterize tests with multiple data sets
+8. **Cross-Browser Testing** - Test on Firefox, Safari, Edge
+9. **Mobile Testing** - Add mobile device emulation tests
 
 ---
 

@@ -1,5 +1,6 @@
 import pytest
 import json
+import re
 from pathlib import Path
 
 
@@ -16,8 +17,40 @@ def browser_context_args(browser_context_args):
 def load_test_data(data_file: str = "Data/data_setup.json") -> dict:
     """Load test data from a JSON file."""
     data_path = Path(__file__).parent / data_file
-    with open(data_path) as f:
+    with open(data_path, encoding="utf-8") as f:
         return json.load(f)
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    setattr(item, f"rep_{report.when}", report)
+
+
+@pytest.fixture(autouse=True)
+def trace_failed_test(context, request):
+    context.tracing.start(
+        screenshots=True,
+        snapshots=True,
+        sources=True,
+    )
+
+    yield
+
+    test_failed = any(
+        getattr(request.node, report_name, None) is not None
+        and getattr(request.node, report_name).failed
+        for report_name in ("rep_setup", "rep_call")
+    )
+
+    if test_failed:
+        trace_name = re.sub(r"[^A-Za-z0-9_.-]+", "_", request.node.nodeid)
+        trace_path = Path("test-results") / "traces" / f"{trace_name}.zip"
+        trace_path.parent.mkdir(parents=True, exist_ok=True)
+        context.tracing.stop(path=str(trace_path))
+    else:
+        context.tracing.stop()
 
 def pytest_addoption(parser):
     parser.addoption(

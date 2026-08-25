@@ -134,21 +134,17 @@ Tests/
 
 **Organization:** Tests are organized by feature/functionality rather than test type.
 
-### Pages Directory (Empty - Ready for Page Object Model)
+### Pages Directory
 
 ```
 Pages/
-├── __init__.py
-├── base_page.py               # Base page class
-├── login_page.py              # Login page object
-├── events_page.py             # Events listing page
-├── event_details_page.py       # Event details page
-├── booking_page.py            # Booking form page
-├── bookings_page.py           # Bookings listing page
-└── confirmation_page.py       # Confirmation page
+├── loginPage.py               # Login and authentication
+├── homePage.py                # Home-page navigation
+├── eventPage.py               # Event booking workflow
+└── bookingsPage.py            # Bookings and refund workflows
 ```
 
-**Future Use:** This directory is prepared for implementing Page Object Model pattern for better maintainability.
+**Current Use:** Page objects receive the shared Playwright `Page`, encapsulate locators and page actions, and expose page-level validations to tests.
 
 ### Utils Directory (Empty - Ready for Utilities)
 
@@ -413,12 +409,12 @@ playwright-pytest/
 
 ## Future Architecture Enhancements
 
-### 1. Page Object Model Implementation
+### 1. Page Object Model Extension
 
-Currently, tests directly interact with Playwright API. Implement POM for better maintainability:
+The current UI tests use the existing page objects. New workflows should extend the relevant class or add a focused page object:
 
 ```python
-# Pages/login_page.py
+# Pages/loginPage.py
 class LoginPage:
     def __init__(self, page):
         self.page = page
