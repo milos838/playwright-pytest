@@ -16,5 +16,8 @@ def test_book_event_through_api(playwright, page: Page, load_test_data,):
 
     page.goto(load_test_data["url"])
     page.locator("#nav-bookings").click()
-    expect(page.get_by_text("World Tech Summit")).to_be_visible()
+    booking_card = page.locator("#booking-card").filter(
+        has=page.get_by_role("heading", name="World Tech Summit")
+    )
+    expect(booking_card.first).to_be_visible()
     
