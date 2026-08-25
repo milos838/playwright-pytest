@@ -12,7 +12,7 @@ class LoginPage:
         self.login_button = self.page.locator("#login-btn")
 
 
-    # Functions
+    # Methods
 
     def login(self, load_test_data):
         test_data = load_test_data

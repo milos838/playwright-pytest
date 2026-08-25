@@ -1,17 +1,21 @@
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page
+from Pages.bookingsPage import BookingsPage
+from Pages.homePage import HomePage
+from Pages.loginPage import LoginPage
 
 def test_E2E_view_booked_event_details(page: Page, load_test_data):
     test_data = load_test_data
-    page.goto(test_data["url"])
-    page.locator("#email").fill(test_data["username"])
-    page.locator("#password").fill(test_data["password"])
-    page.locator("#login-btn").click()
-    page.locator("#nav-bookings").click()
-    page.locator("#booking-card").first.get_by_role("button", name="View Details").click()
-    expect(page.locator(".text-2xl")).to_contain_text(test_data["event_name"])
-    page.locator("#check-refund-btn").click()
-    expect(page.locator("#refund-result")).to_contain_text(test_data["refund_status"])
+    login_page = LoginPage(page)
+    home_page = HomePage(page)
+    bookings_page = BookingsPage(page)
+
+    login_page.login(test_data)
+    home_page.navigate_to_bookings_from_header()
+    bookings_page.wait_for_bookings()
+    bookings_page.view_first_booking_details()
+    bookings_page.event_name_validation(test_data)
+    bookings_page.check_refund_status(test_data)
 
 
 

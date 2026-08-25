@@ -190,7 +190,7 @@ page.wait_for_load_state("networkidle")
 | Test Data | `Data/data_setup.json` |
 | Configuration | `pyproject.toml`, `conftest.py` |
 | Documentation | `README.md`, `SETUP.md`, etc. |
-| Page Objects | `Pages/` (empty, ready to use) |
+| Page Objects | `Pages/loginPage.py`, `Pages/homePage.py`, `Pages/eventPage.py`, `Pages/bookingsPage.py` |
 | Utilities | `Utils/` (empty, ready to use) |
 
 ---
@@ -273,7 +273,7 @@ playwright-pytest/
 │   └── data_setup.json      # Test data
 ├── Tests/
 │   └── test_*.py            # Test files
-├── Pages/                   # Page Objects (empty)
+├── Pages/                   # Page Objects
 ├── Utils/                   # Utilities (empty)
 ├── README.md                # Main docs
 ├── SETUP.md                 # Installation

@@ -206,7 +206,7 @@ Start Here
 | `pyproject.toml` | Project metadata and dependencies |
 | `Data/data_setup.json` | Test data and configuration |
 | `Tests/` | Test case files |
-| `Pages/` | (Future) Page Object Models |
+| `Pages/` | Page Object Models for login, home, event, and bookings workflows |
 | `Utils/` | (Future) Utility functions |
 
 ### Important Commands
@@ -224,7 +224,7 @@ Start Here
 
 - **Tests/** - All test files
 - **Data/** - Test data (data_setup.json)
-- **Pages/** - Page Object Models (empty, ready for use)
+- **Pages/** - Page Object Models used by the UI tests
 - **Utils/** - Utility functions (empty, ready for use)
 
 ---
