@@ -14,15 +14,18 @@ class APIutils:
         api_request_context = playwright.request.new_context(
             base_url=load_test_data["api_url"]
         )
-        response = api_request_context.post(
-            "auth/login",
-            data={
-                "email": load_test_data["username"],
-                "password": load_test_data["password"],
-            },
-        )
-        assert response.ok, f"Login request failed status code = {response.status}"
-        return response.json()["token"]
+        try:
+            response = api_request_context.post(
+                "auth/login",
+                data={
+                    "email": load_test_data["username"],
+                    "password": load_test_data["password"],
+                },
+            )
+            assert response.ok, f"Login request failed status code = {response.status}"
+            return response.json()["token"]
+        finally:
+            api_request_context.dispose()
 
     def bookEvent(self, playwright: Playwright, load_test_data):
 
@@ -30,20 +33,22 @@ class APIutils:
 
         api_request_context = playwright.request.new_context(
             base_url=load_test_data["api_url"])
-        
-        response = api_request_context.post(
-            "bookings",
-            data = eventPayLoad,
-            headers = {
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json"
-            })
-        
-        assert response.ok, (
-            f"Booking request failed: {response.status} {response.text()}"
-        )
-        response_body = response.json()
-        return response_body["data"]["id"]
+        try:
+            response = api_request_context.post(
+                "bookings",
+                data=eventPayLoad,
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                })
+
+            assert response.ok, (
+                f"Booking request failed: {response.status} {response.text()}"
+            )
+            response_body = response.json()
+            return response_body["data"]["id"]
+        finally:
+            api_request_context.dispose()
 
 
         

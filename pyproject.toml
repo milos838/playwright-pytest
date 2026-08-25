@@ -22,7 +22,7 @@ packages = []
 "" = "."
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["Tests"]
 addopts = [
     "--strict-markers",
     "--strict-config",
