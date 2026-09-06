@@ -224,9 +224,12 @@ pytest -n 2  # Use two workers
 ```
 
 Parallel runs require credentials in `EVENTHUB_USERNAME` and
-`EVENTHUB_PASSWORD`. Booking tests generate unique customer data and clean up
-only their own booking. Do not run the account-wide cleanup test in parallel;
-enable it explicitly with `--allow-destructive-cleanup`.
+`EVENTHUB_PASSWORD`. Because the default mode resets the shared account before
+each test, parallel execution is blocked. Use `--keep-account-data -n auto`
+only with isolated accounts or a backend test environment.
+
+The default run starts every test with an empty bookings list. To preserve
+existing account data for local debugging, use `--keep-account-data`.
 
 ---
 

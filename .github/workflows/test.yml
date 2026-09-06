@@ -21,6 +21,7 @@ jobs:
     
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         python-version: ['3.10', '3.11', '3.12']
     
@@ -48,65 +49,31 @@ jobs:
           playwright install-deps chromium
       
       - name: Run smoke tests
-        run: pytest -n auto -m smoke -v --tb=short
+        run: pytest -m smoke -v --tb=short
       
       - name: Run all tests
         if: always()
-        run: pytest -n auto -v --tb=short --html=report.html --self-contained-html
+        run: |
+          mkdir -p test-results
+          pytest -v --tb=short --html=report.html --self-contained-html --junitxml=test-results/results.xml
       
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pytest-report-${{ matrix.python-version }}
-          path: report.html
+          path: |
+            report.html
+            test-results/results.xml
           retention-days: 30
       
       - name: Publish test results
         if: always()
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          files: report.html
+          files: test-results/results.xml
           check_name: Test Results (Python ${{ matrix.python-version }})
         continue-on-error: true
-
-  smoke-tests:
-    name: Smoke Tests (Quick Check)
-    runs-on: ubuntu-latest
-    env:
-      EVENTHUB_USERNAME: ${{ secrets.EVENTHUB_USERNAME }}
-      EVENTHUB_PASSWORD: ${{ secrets.EVENTHUB_PASSWORD }}
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .
-      
-      - name: Install Playwright browsers
-        run: |
-          playwright install chromium
-          playwright install-deps chromium
-      
-      - name: Run smoke tests
-        run: pytest -n auto -m smoke -v
-      
-      - name: Upload smoke test logs
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: smoke-test-logs
-          path: .pytest_cache/
-          retention-days: 7
 
   code-quality:
     name: Code Quality Checks
@@ -144,7 +111,7 @@ jobs:
   summary:
     name: Test Summary
     runs-on: ubuntu-latest
-    needs: [test, smoke-tests]
+    needs: [test]
     if: always()
     
     steps:
@@ -153,9 +120,8 @@ jobs:
           echo "Test Suite Results:"
           echo "==================="
           echo "Full test matrix: ${{ needs.test.result }}"
-          echo "Smoke tests: ${{ needs.smoke-tests.result }}"
           echo "==================="
-          if [[ "${{ needs.test.result }}" == "failure" || "${{ needs.smoke-tests.result }}" == "failure" ]]; then
+          if [[ "${{ needs.test.result }}" == "failure" ]]; then
             echo "⚠️ Some tests failed - check artifacts for details"
             exit 1
           else

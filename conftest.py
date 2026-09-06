@@ -62,6 +62,39 @@ def pytest_addoption(parser):
         action="store_true",
         help="Allow the test that clears every booking for the account to run.",
     )
+    parser.addoption(
+        "--keep-account-data",
+        action="store_true",
+        help="Do not reset account bookings before each test.",
+    )
+
+
+def pytest_configure(config):
+    if config.getoption("--keep-account-data"):
+        return
+
+    workers = config.getoption("numprocesses", default=None)
+    if workers not in (None, 0, "0"):
+        raise pytest.UsageError(
+            "Account reset mode cannot run with pytest-xdist. "
+            "Use one process or pass --keep-account-data with -n."
+        )
+
+
+@pytest.fixture(autouse=True)
+def reset_account_before_test(page, load_test_data, request):
+    """Clear all account bookings before each test unless explicitly disabled."""
+    if request.config.getoption("--keep-account-data"):
+        return
+
+    page.goto(load_test_data["url"])
+    LoginPage(page).login(load_test_data)
+    page.goto(load_test_data["bookings_url"])
+    page.once("dialog", lambda dialog: dialog.accept())
+    clear_button = page.get_by_role("button", name="Clear all bookings")
+    if clear_button.is_visible():
+        clear_button.click()
+        BookingsPage(page).booking_count_validation(0)
 
 
 @pytest.fixture
