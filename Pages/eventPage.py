@@ -18,7 +18,12 @@ class EventPage:
         self.customer_name.fill(test_data["customer_name"])
         self.customer_email.fill(test_data["customer_email"])
         self.customer_phone.fill(test_data["customer_phone"])
-        self.confirm_booking_button.click()
+        with self.page.expect_response(
+            lambda response: response.request.method == "POST"
+            and "/bookings" in response.url
+        ) as response_info:
+            self.confirm_booking_button.click()
+        return response_info.value.json()["data"]["id"]
 
     def booking_confirmation_validation(self):
         expect(self.booking_confirmation).to_contain_text("Booking Confirmed!")

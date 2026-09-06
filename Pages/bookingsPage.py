@@ -24,11 +24,11 @@ class BookingsPage:
         self.booking_cards.last.locator("#cancel-booking-btn").click()
         self.page.get_by_role("button", name="Yes, cancel it").click()
 
-    def booking_card_for(self, customer_email: str):
-        return self.booking_cards.filter(has_text=customer_email)
+    def booking_card_for(self, booking_id: int):
+        return self.booking_cards.filter(has_text=f"#{booking_id}")
 
-    def cancel_booking(self, customer_email: str):
-        booking_card = self.booking_card_for(customer_email)
+    def cancel_booking(self, booking_id: int):
+        booking_card = self.booking_card_for(booking_id)
         if booking_card.count() == 0:
             return
         self.page.once("dialog", lambda dialog: dialog.accept())
@@ -36,8 +36,8 @@ class BookingsPage:
         self.page.get_by_role("button", name="Yes, cancel it").click()
         expect(booking_card).to_have_count(0, timeout=15000)
 
-    def view_booking_details(self, customer_email: str):
-        self.booking_card_for(customer_email).get_by_role(
+    def view_booking_details(self, booking_id: int):
+        self.booking_card_for(booking_id).get_by_role(
             "button", name="View Details"
         ).click()
 

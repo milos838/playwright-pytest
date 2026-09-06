@@ -12,6 +12,6 @@ def test_E2E_cancel_booked_event(page: Page, isolated_ui_booking):
 
     home_page.navigate_to_bookings_from_header()
     bookings_page.wait_for_bookings()
-    bookings_page.cancel_booking(test_data["customer_email"])
-    assert bookings_page.booking_card_for(test_data["customer_email"]).count() == 0
+    bookings_page.cancel_booking(test_data["booking_id"])
+    assert bookings_page.booking_card_for(test_data["booking_id"]).count() == 0
       

@@ -69,15 +69,13 @@ def isolated_ui_booking(page, booking_data):
     """Create one booking for a test and remove only that booking afterward."""
     LoginPage(page).login(booking_data)
     EventPage(page).open_event("/events/2")
-    EventPage(page).book_event(booking_data)
+    booking_data["booking_id"] = EventPage(page).book_event(booking_data)
     EventPage(page).booking_confirmation_validation()
 
     yield booking_data
 
-    page.goto(booking_data["url"])
-    LoginPage(page).login(booking_data)
-    HomePage(page).navigate_to_bookings_from_header()
-    BookingsPage(page).cancel_booking(booking_data["customer_email"])
+    page.goto(booking_data["bookings_url"])
+    BookingsPage(page).cancel_booking(booking_data["booking_id"])
 
 
 @pytest.fixture
@@ -85,7 +83,7 @@ def isolated_api_booking(playwright, page, booking_data):
     """Create an API booking and remove only that booking through the UI."""
     api_utils = APIutils()
     token = api_utils.getToken(playwright, booking_data)
-    api_utils.book_event(playwright, booking_data)
+    booking_data["booking_id"] = api_utils.book_event(playwright, booking_data)
     yield token, booking_data
 
     page.add_init_script(
@@ -93,7 +91,7 @@ def isolated_api_booking(playwright, page, booking_data):
     )
     page.goto(booking_data["url"])
     page.locator("#nav-bookings").click()
-    BookingsPage(page).cancel_booking(booking_data["customer_email"])
+    BookingsPage(page).cancel_booking(booking_data["booking_id"])
 
 
 @pytest.hookimpl(hookwrapper=True)
