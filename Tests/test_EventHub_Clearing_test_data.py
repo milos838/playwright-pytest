@@ -2,8 +2,10 @@ import pytest
 from playwright.sync_api import Page, expect
 
 @pytest.mark.smoke
-@pytest.mark.order("last")
-def test_clear_test_data(page: Page, load_test_data):
+def test_clear_test_data(page: Page, load_test_data, request):
+    if not request.config.getoption("--allow-destructive-cleanup"):
+        pytest.skip("Destructive account-wide cleanup is disabled by default")
+
     test_data = load_test_data
     page.goto(test_data["url"])
     page.locator("#email").fill(test_data["username"])

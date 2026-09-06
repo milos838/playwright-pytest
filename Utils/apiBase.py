@@ -1,12 +1,6 @@
 from playwright.sync_api import Playwright
 
-eventPayLoad = {
-    "eventId": 1,
-    "customerName": "John Doe",
-    "customerEmail": "test@test.com",
-    "customerPhone": "+1234567890",
-    "quantity": 1,
-}
+eventPayLoad = {"eventId": 1, "quantity": 1}
 
 
 class APIutils:
@@ -27,7 +21,7 @@ class APIutils:
         finally:
             api_request_context.dispose()
 
-    def bookEvent(self, playwright: Playwright, load_test_data):
+    def book_event(self, playwright: Playwright, load_test_data):
 
         token = self.getToken(playwright, load_test_data)
 
@@ -36,7 +30,12 @@ class APIutils:
         try:
             response = api_request_context.post(
                 "bookings",
-                data=eventPayLoad,
+                data={
+                    **eventPayLoad,
+                    "customerName": load_test_data["customer_name"],
+                    "customerEmail": load_test_data["customer_email"],
+                    "customerPhone": load_test_data["customer_phone"],
+                },
                 headers={
                     "Authorization": f"Bearer {token}",
                     "Content-Type": "application/json"
@@ -49,6 +48,8 @@ class APIutils:
             return response_body["data"]["id"]
         finally:
             api_request_context.dispose()
+
+    bookEvent = book_event
 
 
         

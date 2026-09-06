@@ -10,6 +10,9 @@ jobs:
   cross-browser-tests:
     name: ${{ matrix.browser }} Browser Tests
     runs-on: ubuntu-latest
+    env:
+      EVENTHUB_USERNAME: ${{ secrets.EVENTHUB_USERNAME }}
+      EVENTHUB_PASSWORD: ${{ secrets.EVENTHUB_PASSWORD }}
     
     strategy:
       fail-fast: false
@@ -38,13 +41,11 @@ jobs:
           playwright install-deps ${{ matrix.browser }}
       
       - name: Run smoke tests on ${{ matrix.browser }}
-        run: pytest -m smoke -v --browser=${{ matrix.browser }}
-        continue-on-error: true
+        run: pytest -n auto -m smoke -v --browser=${{ matrix.browser }}
       
       - name: Run all tests on ${{ matrix.browser }}
         if: always()
-        run: pytest -v --browser=${{ matrix.browser }} --html=report-${{ matrix.browser }}.html --self-contained-html
-        continue-on-error: true
+        run: pytest -n auto -v --browser=${{ matrix.browser }} --html=report-${{ matrix.browser }}.html --self-contained-html
       
       - name: Upload test results
         if: always()

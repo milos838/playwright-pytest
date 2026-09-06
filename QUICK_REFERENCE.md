@@ -213,11 +213,20 @@ pytest --browser firefox
 pytest --browser webkit
 ```
 
+The `--browser` option is provided by `pytest-playwright` and works with all
+tests that use the standard `page` fixture. Runs are headless by default;
+append `--headed` when a visible browser is needed.
+
 ### Run Parallel Tests
 ```bash
-pip install pytest-xdist
 pytest -n auto  # Use all CPU cores
+pytest -n 2  # Use two workers
 ```
+
+Parallel runs require credentials in `EVENTHUB_USERNAME` and
+`EVENTHUB_PASSWORD`. Booking tests generate unique customer data and clean up
+only their own booking. Do not run the account-wide cleanup test in parallel;
+enable it explicitly with `--allow-destructive-cleanup`.
 
 ---
 

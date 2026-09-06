@@ -4,20 +4,17 @@ from Utils.apiBase import APIutils
 
 
 @pytest.mark.smoke
-def test_book_event_through_api(playwright, page: Page, load_test_data,):
-
-    api_utils = APIutils()
-    token = api_utils.getToken(playwright, load_test_data)
-    api_utils.bookEvent(playwright, load_test_data)
+def test_book_event_through_api(page: Page, isolated_api_booking):
+    token, booking_data = isolated_api_booking
 
     page.add_init_script(
         f"window.localStorage.setItem('eventhub_token', '{token}')"
     )
 
-    page.goto(load_test_data["url"])
+    page.goto(booking_data["url"])
     page.locator("#nav-bookings").click()
     booking_card = page.locator("#booking-card").filter(
-        has=page.get_by_role("heading", name="World Tech Summit")
+        has_text=booking_data["customer_email"]
     )
     expect(booking_card.first).to_be_visible()
     

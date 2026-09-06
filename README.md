@@ -108,8 +108,6 @@ source .venv/bin/activate
 ### 3. Install Dependencies
 ```bash
 pip install -e .
-# Or install directly from pyproject.toml
-pip install -r requirements.txt
 ```
 
 This installs:
@@ -160,8 +158,6 @@ Test data is stored in `Data/data_setup.json`:
 ```json
 {
     "url": "https://eventhub.rahulshettyacademy.com/",
-    "username": "mikitest83@gmail.com",
-    "password": "TestTest1!",
     "expected_url": "https://eventhub.rahulshettyacademy.com/login",
     "events_url": "https://eventhub.rahulshettyacademy.com/events",
     "bookings_url": "https://eventhub.rahulshettyacademy.com/bookings",
@@ -171,6 +167,30 @@ Test data is stored in `Data/data_setup.json`:
     "customer_phone": "+1234567890",
     "refund_status": "Eligible for refund."
 }
+```
+
+Set the account credentials outside the repository before running tests:
+
+```bash
+# macOS/Linux
+export EVENTHUB_USERNAME="your-test-account@example.com"
+export EVENTHUB_PASSWORD="your-test-password"
+
+# Windows PowerShell
+$env:EVENTHUB_USERNAME = "your-test-account@example.com"
+$env:EVENTHUB_PASSWORD = "your-test-password"
+```
+
+Booking tests generate unique customer details per test and clean up only the
+booking they created, which allows parallel execution with `pytest-xdist`.
+
+Run against a specific browser with the standard Playwright options:
+
+```bash
+pytest --browser chromium
+pytest --browser firefox
+pytest --browser webkit
+pytest -n auto --browser chromium
 ```
 
 **Important:** This file contains test credentials. Do not commit real credentials to version control. Use environment variables or secrets management in production environments.

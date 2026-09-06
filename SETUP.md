@@ -18,7 +18,11 @@ pip install -e .
 # 4. Install browsers
 playwright install chromium
 
-# 5. Run tests
+# 5. Configure the test account
+$env:EVENTHUB_USERNAME = "your-test-account@example.com"
+$env:EVENTHUB_PASSWORD = "your-test-password"
+
+# 6. Run tests
 pytest
 ```
 
@@ -38,7 +42,11 @@ pip install -e .
 # 4. Install browsers
 playwright install chromium
 
-# 5. Run tests
+# 5. Configure the test account
+export EVENTHUB_USERNAME="your-test-account@example.com"
+export EVENTHUB_PASSWORD="your-test-password"
+
+# 6. Run tests
 pytest
 ```
 
@@ -116,6 +124,8 @@ This installs:
 - `playwright>=1.49.0` - Browser automation engine
 - `pytest>=8.0.0` - Test framework
 - `pytest-playwright>=0.6.0` - pytest plugin for Playwright
+- `pytest-xdist>=3.6.0` - parallel test execution
+- `pytest-html>=4.1.0` - HTML test reports
 
 **Verify installation:**
 ```bash
