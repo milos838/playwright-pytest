@@ -29,6 +29,8 @@ jobs:
       
       - name: Install dependencies
         run: |
+          test -n "$EVENTHUB_USERNAME" || { echo "EVENTHUB_USERNAME is not configured. Add it under Settings > Secrets and variables > Actions > Repository secrets."; exit 1; }
+          test -n "$EVENTHUB_PASSWORD" || { echo "EVENTHUB_PASSWORD is not configured. Add it under Settings > Secrets and variables > Actions > Repository secrets."; exit 1; }
           python -m pip install --upgrade pip
           pip install -e .
           pip install pytest-cov

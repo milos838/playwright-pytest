@@ -402,6 +402,19 @@ Display workflow status in README.md:
 
 ### Secrets Management
 
+The browser and API tests require a dedicated EventHub test account. Add these
+as **repository secrets** under **Settings -> Secrets and variables -> Actions**:
+
+| Secret | Value |
+|---|---|
+| `EVENTHUB_USERNAME` | EventHub test-account email |
+| `EVENTHUB_PASSWORD` | EventHub test-account password |
+
+Do not add the credentials to `Data/data_setup.json`, workflow files, or command
+arguments. Secrets are not available to workflows triggered from forked pull
+requests; run those tests from the repository or use a maintainer-approved
+workflow when reviewing fork changes.
+
 Never store sensitive data in workflows:
 
 ```yaml
