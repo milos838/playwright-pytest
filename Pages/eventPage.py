@@ -11,8 +11,11 @@ class EventPage:
         self.confirm_booking_button = page.locator("#confirm-booking")
         self.booking_confirmation = page.locator(".text-xl")
 
-    def open_event(self, event_href: str):
-        self.page.locator(f"#book-now-btn[href='{event_href}']").click()
+    def open_event(self, event_name: str):
+        event_card = self.page.get_by_test_id("event-card").filter(
+            has_text=event_name
+        )
+        event_card.get_by_test_id("book-now-btn").click()
 
     def book_event(self, test_data: dict):
         self.customer_name.fill(test_data["customer_name"])

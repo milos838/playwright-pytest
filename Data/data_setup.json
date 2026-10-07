@@ -5,6 +5,7 @@
     "events_url": "https://eventhub.rahulshettyacademy.com/events",
     "bookings_url": "https://eventhub.rahulshettyacademy.com/bookings",
     "event_name": "Hollywood Monsoon Night — Los Angeles",
+    "api_event_name": "World Tech Summit",
     "customer_name": "John Doe",
     "customer_email": "test@test.com",
     "customer_phone": "+1234567890",

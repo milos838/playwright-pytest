@@ -87,7 +87,6 @@ def reset_account_before_test(page, load_test_data, request):
     if request.config.getoption("--keep-account-data"):
         return
 
-    page.goto(load_test_data["url"])
     LoginPage(page).login(load_test_data)
     page.goto(load_test_data["bookings_url"])
     page.once("dialog", lambda dialog: dialog.accept())
@@ -101,7 +100,7 @@ def reset_account_before_test(page, load_test_data, request):
 def isolated_ui_booking(page, booking_data):
     """Create one booking for a test and remove only that booking afterward."""
     LoginPage(page).login(booking_data)
-    EventPage(page).open_event("/events/2")
+    EventPage(page).open_event(booking_data["event_name"])
     booking_data["booking_id"] = EventPage(page).book_event(booking_data)
     EventPage(page).booking_confirmation_validation()
 

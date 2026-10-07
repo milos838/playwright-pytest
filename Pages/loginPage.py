@@ -16,7 +16,7 @@ class LoginPage:
 
     def login(self, load_test_data):
         test_data = load_test_data
-        self.page.goto(test_data["url"])
+        self.page.goto(test_data["expected_url"])
         self.email.fill(test_data["username"])
         self.password.fill(test_data["password"])
         self.login_button.click()
