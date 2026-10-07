@@ -16,14 +16,17 @@ class LoginPage:
 
     def login(self, load_test_data):
         test_data = load_test_data
-        self.page.goto(test_data["expected_url"])
+        login_url = test_data["expected_url"]
+        if self.page.url != login_url:
+            self.page.goto(login_url, wait_until="commit")
         self.email.fill(test_data["username"])
         self.password.fill(test_data["password"])
         self.login_button.click()
 
     def navigate_to_URL_(self, load_test_data):
-        test_data = load_test_data
-        self.page.goto(test_data["url"])
+        target_url = load_test_data["url"]
+        if self.page.url != target_url:
+            self.page.goto(target_url, wait_until="commit")
         
 
     # Assertions for login page 
